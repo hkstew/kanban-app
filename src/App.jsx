@@ -4,6 +4,7 @@ import { LogOut, LayoutDashboard, Trello, Plus, Trash2 } from 'lucide-react';
 import AuthScreen from './components/AuthScreen';
 import BoardView from './components/BoardView';
 import DashboardView from './components/DashboardView';
+import NotificationBell from './components/NotificationBell';
 
 export default function App() {
   const [session, setSession] = useState(undefined);
@@ -125,10 +126,11 @@ export default function App() {
             <span className="font-fraunces font-bold text-2xl text-white">งานของฉัน</span>
           </div>
           <div className="flex gap-3 wrap">
-            <button onClick={() => setView(view === 'dashboard' ? 'board' : 'dashboard')} className={`btn ${view === 'dashboard' ? 'btn-primary' : 'btn-outline'}`}>
+            <NotificationBell boards={boards} onSelectBoard={(id) => { setActiveBoardId(id); setView('board'); }} />
+            <button onClick={() => setView(view === 'dashboard' ? 'board' : 'dashboard')} className={`btn ${view === 'dashboard' ? 'btn-primary' : 'btn-outline'}`} style={{ borderRadius: 'var(--radius-full)' }}>
               {view === 'dashboard' ? <><Trello size={16} /> กลับสู่บอร์ด</> : <><LayoutDashboard size={16} /> ภาพรวมทั้งหมด</>}
             </button>
-            <button onClick={handleLogout} title="ออกจากระบบ" className="btn btn-outline btn-icon" style={{ borderColor: 'rgba(239, 68, 68, 0.3)', color: 'var(--accent-red)' }}>
+            <button onClick={handleLogout} title="ออกจากระบบ" className="btn btn-outline btn-icon" style={{ borderColor: 'rgba(239, 68, 68, 0.3)', color: 'var(--accent-red)', borderRadius: 'var(--radius-full)' }}>
               <LogOut size={16} />
             </button>
           </div>
