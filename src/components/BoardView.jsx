@@ -151,16 +151,16 @@ export default function BoardView({ board, onBoardDataChanged }) {
   const progress = totalCards === 0 ? 0 : Math.round((doneCards / totalCards) * 100);
 
   if (loading) {
-    return <div className="text-muted text-sm text-center" style={{ padding: 40 }}>กำลังโหลดบอร์ด...</div>;
+    return <div className="text-muted text-sm text-center" style={{ padding: 60 }}>กำลังโหลดบอร์ด...</div>;
   }
 
   return (
     <div className="flex-col" style={{ minHeight: '100%' }}>
       {error && <div className="alert-error">{error}</div>}
 
-      <div style={{ marginBottom: 24 }}>
-        <div className="flex items-baseline gap-3 wrap" style={{ marginBottom: 12 }}>
-          <span className="font-fraunces font-bold text-green" style={{ fontSize: 40, lineHeight: 1 }}>{progress}%</span>
+      <div className="glass-panel" style={{ padding: '24px', marginBottom: 32 }}>
+        <div className="flex items-baseline gap-4 wrap" style={{ marginBottom: 16 }}>
+          <span className="font-fraunces font-bold text-transparent bg-clip-text" style={{ fontSize: 48, lineHeight: 1, background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))', WebkitBackgroundClip: 'text', textShadow: 'var(--shadow-glow)' }}>{progress}%</span>
           <span className="text-muted text-sm font-medium">เสร็จแล้ว {doneCards} จาก {totalCards} งาน</span>
         </div>
         <div className="progress-bg">
@@ -168,22 +168,22 @@ export default function BoardView({ board, onBoardDataChanged }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 wrap" style={{ marginBottom: 24 }}>
-        <div className="flex items-center gap-2 flex-1 shrink-0" style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', padding: '8px 12px', background: 'white', minWidth: 200 }}>
-          <Search size={16} className="text-muted" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหางาน..." className="input-ghost flex-1" style={{ fontSize: 14 }} />
-          {search && <X size={14} className="text-muted" style={{ cursor: 'pointer' }} onClick={() => setSearch('')} />}
+      <div className="flex items-center gap-3 wrap" style={{ marginBottom: 32 }}>
+        <div className="flex items-center gap-3 flex-1 shrink-0 glass" style={{ borderRadius: 'var(--radius-full)', padding: '10px 16px', minWidth: 240 }}>
+          <Search size={18} className="text-cyan" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหางานในบอร์ด..." className="input-ghost flex-1" style={{ fontSize: 15, color: 'white' }} />
+          {search && <X size={16} className="text-muted" style={{ cursor: 'pointer' }} onClick={() => setSearch('')} />}
         </div>
         <div style={{ position: 'relative' }}>
-          <button onClick={() => setFilterOpen(!filterOpen)} className={`btn ${filterTag ? 'btn-primary' : 'btn-outline'}`}>
-            <TagIcon size={14} /> {filterTag ? tags.find((t) => t.id === filterTag)?.name : 'แท็ก'} <ChevronDown size={14} />
+          <button onClick={() => setFilterOpen(!filterOpen)} className={`btn ${filterTag ? 'btn-primary' : 'glass'}`} style={{ borderRadius: 'var(--radius-full)', padding: '10px 20px' }}>
+            <TagIcon size={16} /> {filterTag ? tags.find((t) => t.id === filterTag)?.name : 'กรองด้วยแท็ก'} <ChevronDown size={14} />
           </button>
           {filterOpen && (
-            <div className="card" style={{ position: 'absolute', top: 44, right: 0, padding: 8, zIndex: 20, minWidth: 160 }}>
-              <div onClick={() => { setFilterTag(null); setFilterOpen(false); }} className="btn-ghost" style={{ display: 'block', padding: '8px 12px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', textAlign: 'left', marginBottom: 4 }}>ทั้งหมด</div>
+            <div className="glass-panel" style={{ position: 'absolute', top: 52, right: 0, padding: 8, zIndex: 20, minWidth: 180 }}>
+              <div onClick={() => { setFilterTag(null); setFilterOpen(false); }} className="btn-ghost" style={{ display: 'block', padding: '10px 12px', borderRadius: 'var(--radius-md)', cursor: 'pointer', textAlign: 'left', marginBottom: 4 }}>ทั้งหมด</div>
               {tags.map((t) => (
-                <div key={t.id} onClick={() => { setFilterTag(t.id); setFilterOpen(false); }} className="btn-ghost flex items-center gap-2" style={{ padding: '8px 12px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', width: '100%', justifyContent: 'flex-start' }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: t.color }} /> <span style={{ color: 'var(--ink)' }}>{t.name}</span>
+                <div key={t.id} onClick={() => { setFilterTag(t.id); setFilterOpen(false); }} className="btn-ghost flex items-center gap-3" style={{ padding: '10px 12px', borderRadius: 'var(--radius-md)', cursor: 'pointer', width: '100%', justifyContent: 'flex-start' }}>
+                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: t.color, boxShadow: `0 0 8px ${t.color}` }} /> <span className="text-white font-medium">{t.name}</span>
                 </div>
               ))}
             </div>
@@ -211,12 +211,12 @@ export default function BoardView({ board, onBoardDataChanged }) {
           />
         ))}
 
-        <div className="board-column" style={{ padding: '12px 0' }}>
+        <div className="board-column" style={{ padding: '0 0' }}>
           {addingCol ? (
-            <input autoFocus value={newColName} onChange={(e) => setNewColName(e.target.value)} onBlur={handleAddColumn} onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()} placeholder="ชื่อคอลัมน์ใหม่" className="input" style={{ width: '100%' }} />
+            <input autoFocus value={newColName} onChange={(e) => setNewColName(e.target.value)} onBlur={handleAddColumn} onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()} placeholder="ชื่อคอลัมน์ใหม่" className="input glass" style={{ width: '100%', padding: '16px' }} />
           ) : (
-            <button onClick={() => setAddingCol(true)} className="btn btn-dashed" style={{ width: '100%', padding: '12px' }}>
-              <Plus size={16} /> เพิ่มคอลัมน์
+            <button onClick={() => setAddingCol(true)} className="btn btn-dashed" style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-xl)' }}>
+              <Plus size={18} className="text-cyan" /> สร้างคอลัมน์เพิ่ม
             </button>
           )}
         </div>

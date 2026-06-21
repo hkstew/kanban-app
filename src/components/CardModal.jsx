@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { X, Check, Trash2 } from 'lucide-react';
+import { X, Check, Trash2, Calendar as CalendarIcon, Tag as TagIcon, Flag } from 'lucide-react';
 
 function IconBtn({ onClick, children, title }) {
   return (
-    <button onClick={onClick} title={title} className="btn-outline btn-icon" style={{ borderRadius: 'var(--radius-sm)' }}>
+    <button onClick={onClick} title={title} className="btn-outline btn-icon" style={{ borderRadius: 'var(--radius-full)' }}>
       {children}
     </button>
   );
@@ -39,45 +39,45 @@ export default function CardModal({ card, tags, onClose, onSave, onDelete }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-end" style={{ marginBottom: 8 }}>
+        <div className="flex justify-end" style={{ marginBottom: 12 }}>
           <IconBtn onClick={onClose} title="ปิด"><X size={16} /></IconBtn>
         </div>
 
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="ชื่องาน"
-          className="input-ghost font-fraunces font-bold text-2xl text-ink"
-          style={{ width: '100%', marginBottom: 16 }}
+          placeholder="ชื่องาน..."
+          className="input-ghost font-fraunces font-bold text-3xl text-white"
+          style={{ width: '100%', marginBottom: 20 }}
         />
 
         <textarea
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-          placeholder="รายละเอียดเพิ่มเติม..."
+          placeholder="รายละเอียดเพิ่มเติม (Markdown รองรับบางส่วน)..."
           rows={3}
           className="input"
-          style={{ resize: 'vertical', marginBottom: 20 }}
+          style={{ resize: 'vertical', marginBottom: 24, fontSize: 14 }}
         />
 
-        <div className="flex gap-4 wrap" style={{ marginBottom: 20 }}>
-          <div className="flex-1 shrink-0" style={{ minWidth: 140 }}>
-            <label className="text-muted text-xs font-bold" style={{ textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', marginBottom: 6 }}>กำหนดส่ง</label>
-            <input type="date" value={deadline || ''} onChange={(e) => setDeadline(e.target.value)} className="input" />
+        <div className="flex gap-4 wrap" style={{ marginBottom: 24 }}>
+          <div className="flex-1 shrink-0 glass" style={{ minWidth: 150, padding: 12, borderRadius: 'var(--radius-lg)' }}>
+            <label className="text-muted text-xs font-bold flex items-center gap-2" style={{ textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}><CalendarIcon size={14} /> กำหนดส่ง</label>
+            <input type="date" value={deadline || ''} onChange={(e) => setDeadline(e.target.value)} className="input-ghost text-white font-medium text-sm" style={{ width: '100%' }} />
           </div>
-          <div className="flex-1 shrink-0" style={{ minWidth: 140 }}>
-            <label className="text-muted text-xs font-bold" style={{ textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', marginBottom: 6 }}>ความสำคัญ</label>
-            <select value={priority} onChange={(e) => setPriority(e.target.value)} className="input">
+          <div className="flex-1 shrink-0 glass" style={{ minWidth: 150, padding: 12, borderRadius: 'var(--radius-lg)' }}>
+            <label className="text-muted text-xs font-bold flex items-center gap-2" style={{ textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}><Flag size={14} /> ความสำคัญ</label>
+            <select value={priority} onChange={(e) => setPriority(e.target.value)} className="input-ghost text-white font-medium text-sm" style={{ width: '100%' }}>
               <option value="none">ไม่ระบุ</option>
-              <option value="low">ต่ำ</option>
-              <option value="medium">กลาง</option>
-              <option value="high">สูง</option>
+              <option value="low">ต่ำ (Low)</option>
+              <option value="medium">กลาง (Medium)</option>
+              <option value="high">สูง (High)</option>
             </select>
           </div>
         </div>
 
-        <div style={{ marginBottom: 20 }}>
-          <label className="text-muted text-xs font-bold" style={{ textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', marginBottom: 8 }}>แท็ก</label>
+        <div className="glass" style={{ marginBottom: 24, padding: 16, borderRadius: 'var(--radius-lg)' }}>
+          <label className="text-muted text-xs font-bold flex items-center gap-2" style={{ textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}><TagIcon size={14} /> แท็ก</label>
           <div className="flex gap-2 wrap">
             {tags.map((t) => {
               const active = selectedTags.includes(t.id);
@@ -86,12 +86,13 @@ export default function CardModal({ card, tags, onClose, onSave, onDelete }) {
                   key={t.id}
                   onClick={() => toggleTag(t.id)}
                   style={{
-                    padding: '6px 12px', borderRadius: 'var(--radius-full)', fontSize: 12,
-                    border: `1px solid ${active ? t.color : 'var(--line)'}`,
-                    background: active ? t.color : 'white',
-                    color: active ? 'white' : 'var(--ink)',
-                    cursor: 'pointer', fontWeight: active ? 600 : 500,
-                    transition: 'var(--transition)'
+                    padding: '6px 14px', borderRadius: 'var(--radius-full)', fontSize: 12,
+                    border: `1px solid ${active ? t.color : 'rgba(255,255,255,0.1)'}`,
+                    background: active ? `${t.color}33` : 'rgba(255,255,255,0.03)',
+                    color: active ? t.color : 'var(--text-main)',
+                    cursor: 'pointer', fontWeight: 600,
+                    transition: 'var(--transition)',
+                    boxShadow: active ? `0 0 10px ${t.color}44` : 'none'
                   }}
                 >
                   {t.name}
@@ -101,39 +102,39 @@ export default function CardModal({ card, tags, onClose, onSave, onDelete }) {
           </div>
         </div>
 
-        <div style={{ marginBottom: 32 }}>
-          <label className="text-muted text-xs font-bold" style={{ textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', marginBottom: 8 }}>
-            เช็คลิสต์ {checklist.length > 0 && `(${checklist.filter((c) => c.done).length}/${checklist.length})`}
+        <div style={{ marginBottom: 40 }}>
+          <label className="text-white text-base font-bold flex items-center gap-2" style={{ marginBottom: 16 }}>
+            <Check size={18} className="text-cyan" /> เช็คลิสต์งานย่อย {checklist.length > 0 && <span className="text-muted text-sm font-medium">({checklist.filter((c) => c.done).length}/{checklist.length})</span>}
           </label>
           {checklist.map((c) => (
-            <div key={c.id} className="flex items-center gap-3" style={{ marginBottom: 8 }}>
+            <div key={c.id} className="flex items-center gap-3" style={{ marginBottom: 10, padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius-md)' }}>
               <button
                 onClick={() => toggleChk(c.id)}
                 style={{
                   width: 20, height: 20, borderRadius: 6,
-                  border: `2px solid ${c.done ? 'var(--green)' : 'var(--line)'}`,
-                  background: c.done ? 'var(--green)' : 'white',
+                  border: `2px solid ${c.done ? 'var(--accent-cyan)' : 'var(--border-light)'}`,
+                  background: c.done ? 'var(--accent-cyan)' : 'transparent',
+                  boxShadow: c.done ? 'var(--shadow-glow)' : 'none',
                   cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                   transition: 'var(--transition)'
                 }}
               >
                 {c.done && <Check size={14} color="white" strokeWidth={3} />}
               </button>
-              <span className="flex-1 text-sm" style={{ textDecoration: c.done ? 'line-through' : 'none', color: c.done ? 'var(--muted)' : 'var(--ink)' }}>{c.text}</span>
-              <button onClick={() => removeChk(c.id)} className="btn-ghost" style={{ padding: 4, borderRadius: 'var(--radius-sm)' }}><X size={14} /></button>
+              <span className="flex-1 text-sm font-medium" style={{ textDecoration: c.done ? 'line-through' : 'none', color: c.done ? 'var(--text-muted)' : 'var(--text-main)' }}>{c.text}</span>
+              <button onClick={() => removeChk(c.id)} className="btn-ghost" style={{ padding: 6, borderRadius: 'var(--radius-full)' }}><X size={14} /></button>
             </div>
           ))}
-          <div className="flex gap-2" style={{ marginTop: 12 }}>
-            <input value={newChk} onChange={(e) => setNewChk(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addChecklistItem()} placeholder="เพิ่มรายการย่อย..." className="input flex-1" />
-            <button onClick={addChecklistItem} className="btn btn-outline">+</button>
+          <div className="flex gap-2" style={{ marginTop: 16 }}>
+            <input value={newChk} onChange={(e) => setNewChk(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addChecklistItem()} placeholder="พิมพ์เพิ่มรายการย่อย แล้วกด Enter..." className="input flex-1" style={{ padding: '12px 16px', borderRadius: 'var(--radius-full)' }} />
           </div>
         </div>
 
-        <div className="flex justify-between gap-3">
-          <button onClick={() => onDelete(card.id)} className="btn" style={{ background: '#FCE9E7', color: 'var(--text-error)' }}>
-            <Trash2 size={16} /> ลบการ์ด
+        <div className="flex justify-between gap-4">
+          <button onClick={() => onDelete(card.id)} className="btn" style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '12px 20px', borderRadius: 'var(--radius-full)' }}>
+            <Trash2 size={16} /> ลบ
           </button>
-          <button onClick={handleSave} className="btn btn-primary flex-1">
+          <button onClick={handleSave} className="btn btn-primary flex-1" style={{ padding: '12px 20px', borderRadius: 'var(--radius-full)', fontSize: 15 }}>
             บันทึกการเปลี่ยนแปลง
           </button>
         </div>
