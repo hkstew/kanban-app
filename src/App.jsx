@@ -6,8 +6,6 @@ import AuthScreen from './components/AuthScreen';
 import BoardView from './components/BoardView';
 import DashboardView from './components/DashboardView';
 
-const COLORS = { ink: '#1C1B1A', paper: '#FAF8F4', line: '#D9D4C9', muted: '#8A857C' };
-
 export default function App() {
   const [session, setSession] = useState(undefined); // undefined = loading, null = logged out
   const [boards, setBoards] = useState([]);
@@ -82,7 +80,7 @@ export default function App() {
   };
 
   if (session === undefined) {
-    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: COLORS.paper, color: COLORS.muted, fontFamily: 'Inter, sans-serif' }}>กำลังโหลด...</div>;
+    return <div className="flex items-center justify-center" style={{ minHeight: '100vh' }}><div className="text-muted text-sm">กำลังโหลด...</div></div>;
   }
 
   if (!session) {
@@ -90,63 +88,63 @@ export default function App() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: COLORS.paper, fontFamily: 'Inter, sans-serif' }}>
-      <div style={{ maxWidth: 920, margin: '0 auto', padding: '18px 16px 60px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 7, background: COLORS.ink, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Trello size={16} color={COLORS.paper} />
+    <div style={{ minHeight: '100vh' }}>
+      <div className="container">
+        <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
+          <div className="flex items-center gap-2">
+            <div className="bg-ink flex items-center justify-center" style={{ width: 34, height: 34, borderRadius: 'var(--radius-sm)' }}>
+              <Trello size={18} className="text-white" />
             </div>
-            <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 19, color: COLORS.ink }}>งานของฉัน</span>
+            <span className="font-fraunces font-bold text-xl text-ink">งานของฉัน</span>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => setView(view === 'dashboard' ? 'board' : 'dashboard')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 8, border: `1px solid ${COLORS.line}`, background: 'white', cursor: 'pointer', fontSize: 13, color: COLORS.ink }}>
-              {view === 'dashboard' ? <><Trello size={14} /> ดูบอร์ด</> : <><LayoutDashboard size={14} /> ภาพรวม</>}
+          <div className="flex gap-2">
+            <button onClick={() => setView(view === 'dashboard' ? 'board' : 'dashboard')} className="btn btn-outline">
+              {view === 'dashboard' ? <><Trello size={16} /> ดูบอร์ด</> : <><LayoutDashboard size={16} /> ภาพรวม</>}
             </button>
-            <button onClick={handleLogout} title="ออกจากระบบ" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, padding: 0, borderRadius: 8, border: `1px solid ${COLORS.line}`, background: 'white', cursor: 'pointer', color: COLORS.muted }}>
-              <LogOut size={14} />
+            <button onClick={handleLogout} title="ออกจากระบบ" className="btn btn-outline btn-icon">
+              <LogOut size={16} className="text-muted" />
             </button>
           </div>
         </div>
 
         {error && (
-          <div style={{ background: '#FCE9E7', border: '1px solid #E8645A55', color: '#B23A30', padding: '8px 12px', borderRadius: 8, fontSize: 13, marginBottom: 12 }}>
+          <div className="alert-error">
             {error}
           </div>
         )}
 
         {view === 'board' && (
-          <div style={{ display: 'flex', gap: 6, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
+          <div className="flex gap-2" style={{ marginBottom: '24px', overflowX: 'auto', paddingBottom: '4px' }}>
             {boards.map((b) => (
-              <button key={b.id} onClick={() => setActiveBoardId(b.id)} style={{ padding: '7px 14px', borderRadius: 20, border: `1px solid ${b.id === activeBoardId ? COLORS.ink : COLORS.line}`, background: b.id === activeBoardId ? COLORS.ink : 'white', color: b.id === activeBoardId ? 'white' : COLORS.ink, cursor: 'pointer', fontSize: 13, fontWeight: b.id === activeBoardId ? 600 : 400, whiteSpace: 'nowrap', flexShrink: 0 }}>
+              <button key={b.id} onClick={() => setActiveBoardId(b.id)} className={`btn shrink-0 ${b.id === activeBoardId ? 'btn-primary' : 'btn-outline'}`} style={{ borderRadius: 'var(--radius-full)' }}>
                 {b.name}
               </button>
             ))}
             {addingBoard ? (
-              <input autoFocus value={newBoardName} onChange={(e) => setNewBoardName(e.target.value)} onBlur={handleAddBoard} onKeyDown={(e) => e.key === 'Enter' && handleAddBoard()} placeholder="ชื่อบอร์ดใหม่" style={{ padding: '7px 12px', borderRadius: 20, border: `1px solid ${COLORS.line}`, fontSize: 13, width: 140 }} />
+              <input autoFocus value={newBoardName} onChange={(e) => setNewBoardName(e.target.value)} onBlur={handleAddBoard} onKeyDown={(e) => e.key === 'Enter' && handleAddBoard()} placeholder="ชื่อบอร์ดใหม่" className="input shrink-0" style={{ width: '160px', borderRadius: 'var(--radius-full)', padding: '8px 14px' }} />
             ) : (
-              <button onClick={() => setAddingBoard(true)} style={{ padding: '7px 12px', borderRadius: 20, border: `1px dashed ${COLORS.line}`, background: 'transparent', cursor: 'pointer', fontSize: 13, color: COLORS.muted, whiteSpace: 'nowrap', flexShrink: 0 }}>
-                <Plus size={13} style={{ verticalAlign: -2 }} /> บอร์ดใหม่
+              <button onClick={() => setAddingBoard(true)} className="btn btn-dashed shrink-0" style={{ borderRadius: 'var(--radius-full)' }}>
+                <Plus size={16} /> บอร์ดใหม่
               </button>
             )}
           </div>
         )}
 
         {boardsLoading ? (
-          <div style={{ padding: 30, color: COLORS.muted, fontSize: 14 }}>กำลังโหลด...</div>
+          <div className="text-center text-muted text-sm" style={{ padding: '40px' }}>กำลังโหลด...</div>
         ) : view === 'dashboard' ? (
           <DashboardView userId={session.user.id} boards={boards} refreshKey={refreshKey} onSelectBoard={(id) => { setActiveBoardId(id); setView('board'); }} />
         ) : activeBoard ? (
-          <>
+          <div className="flex-col gap-4">
             <BoardView board={activeBoard} onBoardDataChanged={() => setRefreshKey((k) => k + 1)} />
             {boards.length > 1 && (
-              <button onClick={() => handleDeleteBoard(activeBoard.id)} style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px', borderRadius: 6, border: `1px solid ${COLORS.line}`, background: 'white', color: COLORS.muted, cursor: 'pointer', fontSize: 12 }}>
-                <Trash2 size={12} /> ลบบอร์ดนี้
+              <button onClick={() => handleDeleteBoard(activeBoard.id)} className="btn btn-ghost text-xs" style={{ marginTop: '16px', alignSelf: 'flex-start' }}>
+                <Trash2 size={14} /> ลบบอร์ดนี้
               </button>
             )}
-          </>
+          </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: COLORS.muted }}>ยังไม่มีบอร์ด — สร้างบอร์ดใหม่เพื่อเริ่มต้น</div>
+          <div className="text-center text-muted" style={{ padding: '80px 0' }}>ยังไม่มีบอร์ด — สร้างบอร์ดใหม่เพื่อเริ่มต้น</div>
         )}
       </div>
     </div>

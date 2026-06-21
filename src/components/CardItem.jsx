@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Check } from 'lucide-react';
 
-const COLORS = {
-  ink: '#1C1B1A', accent: '#E8645A', gold: '#D4A24C', line: '#D9D4C9', muted: '#8A857C',
-};
-
-function daysUntil(dateStr) {
+export function daysUntil(dateStr) {
   if (!dateStr) return null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -13,18 +9,18 @@ function daysUntil(dateStr) {
   return Math.round((target - today) / 86400000);
 }
 
-function deadlineColor(dateStr, isDone) {
+export function deadlineColor(dateStr, isDone) {
   if (!dateStr || isDone) return null;
   const d = daysUntil(dateStr);
-  if (d < 0) return COLORS.accent;
-  if (d <= 2) return COLORS.gold;
+  if (d < 0) return 'var(--accent)';
+  if (d <= 2) return 'var(--gold)';
   return null;
 }
 
 function PriorityDot({ level }) {
-  const map = { high: COLORS.accent, medium: COLORS.gold, low: COLORS.muted };
+  const map = { high: 'var(--accent)', medium: 'var(--gold)', low: 'var(--muted)' };
   if (!level || level === 'none') return null;
-  return <span style={{ width: 7, height: 7, borderRadius: '50%', background: map[level], display: 'inline-block' }} />;
+  return <span style={{ width: 8, height: 8, borderRadius: '50%', background: map[level], display: 'inline-block' }} />;
 }
 
 export function CardItem({ card, tags, isDoneColumn, onOpen, onDragStart, onDragEnd, isDragging }) {
@@ -39,32 +35,31 @@ export function CardItem({ card, tags, isDoneColumn, onOpen, onDragStart, onDrag
       onDragStart={(e) => onDragStart(e, card)}
       onDragEnd={onDragEnd}
       onClick={() => onOpen(card)}
+      className={`task-card ${isDragging ? 'dragging' : ''}`}
       style={{
-        background: 'white', border: `1px solid ${COLORS.line}`, borderRadius: 8, padding: '10px 12px',
-        marginBottom: 8, cursor: 'pointer', opacity: isDragging ? 0.4 : 1,
-        borderLeft: dColor ? `3px solid ${dColor}` : `1px solid ${COLORS.line}`,
+        borderLeft: dColor ? `3px solid ${dColor}` : `1px solid var(--line)`,
       }}
     >
       {cardTags.length > 0 && (
-        <div style={{ display: 'flex', gap: 4, marginBottom: 6, flexWrap: 'wrap' }}>
+        <div className="flex gap-2 wrap" style={{ marginBottom: 8 }}>
           {cardTags.map((t) => (
-            <span key={t.id} style={{ fontSize: 10, padding: '1px 7px', borderRadius: 10, background: t.color + '22', color: t.color, fontWeight: 600 }}>{t.name}</span>
+            <span key={t.id} style={{ fontSize: 10, padding: '2px 8px', borderRadius: 'var(--radius-full)', background: t.color + '22', color: t.color, fontWeight: 600 }}>{t.name}</span>
           ))}
         </div>
       )}
-      <div style={{ fontSize: 14, color: COLORS.ink, lineHeight: 1.4, display: 'flex', alignItems: 'flex-start', gap: 6 }}>
-        <span style={{ marginTop: 5 }}><PriorityDot level={card.priority} /></span>
-        <span>{card.title}</span>
+      <div className="flex items-baseline gap-2 text-sm text-ink" style={{ lineHeight: 1.4 }}>
+        <span style={{ transform: 'translateY(-1px)' }}><PriorityDot level={card.priority} /></span>
+        <span className="font-medium">{card.title}</span>
       </div>
-      <div style={{ display: 'flex', gap: 10, marginTop: 6, alignItems: 'center' }}>
+      <div className="flex gap-3 items-center" style={{ marginTop: 8 }}>
         {card.deadline && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: dColor || COLORS.muted, fontWeight: dColor ? 700 : 400 }}>
-            <Calendar size={11} /> {card.deadline}
+          <span className="flex items-center gap-2 text-xs" style={{ color: dColor || 'var(--muted)', fontWeight: dColor ? 600 : 400 }}>
+            <Calendar size={12} /> {card.deadline}
           </span>
         )}
         {chkTotal > 0 && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: COLORS.muted }}>
-            <Check size={11} /> {chkDone}/{chkTotal}
+          <span className="flex items-center gap-2 text-xs text-muted">
+            <Check size={12} /> {chkDone}/{chkTotal}
           </span>
         )}
       </div>
@@ -80,16 +75,15 @@ export function QuickAdd({ onAdd }) {
     setVal('');
   };
   return (
-    <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+    <div className="flex gap-2" style={{ marginBottom: 12 }}>
       <input
         value={val}
         onChange={(e) => setVal(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && submit()}
         placeholder="+ เพิ่มงานเร็ว..."
-        style={{ flex: 1, padding: '7px 9px', borderRadius: 6, border: `1px dashed ${COLORS.line}`, fontSize: 13, outline: 'none', background: 'transparent' }}
+        className="input input-ghost"
+        style={{ flex: 1, padding: '8px 10px', borderRadius: 'var(--radius-sm)', border: `1px dashed var(--line)`, fontSize: 13 }}
       />
     </div>
   );
 }
-
-export { daysUntil, deadlineColor };

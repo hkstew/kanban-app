@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle, Clock } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
-const COLORS = { ink: '#1C1B1A', paperDim: '#F1EDE5', accent: '#E8645A', green: '#3D7A6B', gold: '#D4A24C', line: '#D9D4C9', muted: '#8A857C' };
-
 function daysUntil(dateStr) {
   if (!dateStr) return null;
   const today = new Date();
@@ -45,8 +43,8 @@ export default function DashboardView({ userId, boards, onSelectBoard, refreshKe
     return () => { cancelled = true; };
   }, [boards, refreshKey]);
 
-  if (loading) return <div style={{ padding: 30, color: COLORS.muted, fontSize: 14 }}>กำลังโหลดภาพรวม...</div>;
-  if (error) return <div style={{ padding: 16, color: COLORS.accent, fontSize: 13 }}>{error}</div>;
+  if (loading) return <div className="text-muted text-sm text-center" style={{ padding: 40 }}>กำลังโหลดภาพรวม...</div>;
+  if (error) return <div className="alert-error">{error}</div>;
 
   const colMap = Object.fromEntries(allColumns.map((c) => [c.id, c]));
   const boardMap = Object.fromEntries(boards.map((b) => [b.id, b.name]));
@@ -71,74 +69,74 @@ export default function DashboardView({ userId, boards, onSelectBoard, refreshKe
   const weekAgo = Date.now() - 7 * 86400000;
   const completedThisWeek = allCards.filter((c) => c.done_at && new Date(c.done_at).getTime() >= weekAgo).length;
 
-  const StatBlock = ({ label, value, color }) => (
-    <div style={{ flex: '1 1 100px', background: 'white', border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: '14px 14px' }}>
-      <div style={{ fontFamily: 'Fraunces, serif', fontSize: 32, fontWeight: 700, color: color || COLORS.ink, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 6 }}>{label}</div>
+  const StatBlock = ({ label, value, colorClass }) => (
+    <div className="card flex-1 shrink-0" style={{ padding: '16px', minWidth: '120px' }}>
+      <div className={`font-fraunces font-bold text-2xl ${colorClass || 'text-ink'}`} style={{ lineHeight: 1 }}>{value}</div>
+      <div className="text-muted text-xs font-medium" style={{ marginTop: 8 }}>{label}</div>
     </div>
   );
 
   return (
-    <div style={{ padding: '4px 4px 30px' }}>
-      <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 24, fontWeight: 700, margin: '4px 0 16px', color: COLORS.ink }}>ภาพรวมทั้งหมด</h2>
+    <div style={{ paddingBottom: 40 }}>
+      <h2 className="font-fraunces font-bold text-xl text-ink" style={{ margin: '0 0 16px' }}>ภาพรวมทั้งหมด</h2>
 
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+      <div className="flex gap-3 wrap" style={{ marginBottom: 24 }}>
         <StatBlock label="To do" value={todoCount} />
-        <StatBlock label="Doing" value={doingCount} color={COLORS.gold} />
-        <StatBlock label="Done" value={doneCount} color={COLORS.green} />
-        <StatBlock label="เสร็จในสัปดาห์นี้" value={completedThisWeek} color={COLORS.green} />
+        <StatBlock label="Doing" value={doingCount} colorClass="text-gold" />
+        <StatBlock label="Done" value={doneCount} colorClass="text-green" />
+        <StatBlock label="เสร็จในสัปดาห์นี้" value={completedThisWeek} colorClass="text-green" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12, marginBottom: 20 }}>
-        <div style={{ background: 'white', border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-            <AlertCircle size={15} color={COLORS.accent} />
-            <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 15 }}>เลยกำหนดแล้ว ({overdue.length})</span>
+      <div className="flex-col gap-4" style={{ marginBottom: 32 }}>
+        <div className="card" style={{ padding: 16 }}>
+          <div className="flex items-center gap-2" style={{ marginBottom: 12 }}>
+            <AlertCircle size={16} className="text-error" />
+            <span className="font-fraunces font-bold text-base">เลยกำหนดแล้ว ({overdue.length})</span>
           </div>
-          {overdue.length === 0 && <div style={{ fontSize: 13, color: COLORS.muted }}>ไม่มีงานค้าง — เยี่ยมมาก</div>}
+          {overdue.length === 0 && <div className="text-muted text-sm">ไม่มีงานค้าง — เยี่ยมมาก</div>}
           {overdue.map((c) => (
-            <div key={c.id} onClick={() => onSelectBoard(c.board_id)} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderTop: `1px solid ${COLORS.paperDim}`, cursor: 'pointer', fontSize: 13 }}>
+            <div key={c.id} onClick={() => onSelectBoard(c.board_id)} className="flex justify-between items-center text-sm" style={{ padding: '8px 0', borderTop: '1px solid var(--paper-dim)', cursor: 'pointer' }}>
               <span>{c.title}</span>
-              <span style={{ color: COLORS.accent, fontWeight: 600 }}>{c.deadline} · {boardMap[c.board_id]}</span>
+              <span className="text-error font-bold">{c.deadline} · {boardMap[c.board_id]}</span>
             </div>
           ))}
         </div>
 
-        <div style={{ background: 'white', border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-            <Clock size={15} color={COLORS.gold} />
-            <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 15 }}>ใกล้ครบกำหนด ({upcoming.length})</span>
+        <div className="card" style={{ padding: 16 }}>
+          <div className="flex items-center gap-2" style={{ marginBottom: 12 }}>
+            <Clock size={16} className="text-gold" />
+            <span className="font-fraunces font-bold text-base">ใกล้ครบกำหนด ({upcoming.length})</span>
           </div>
-          {upcoming.length === 0 && <div style={{ fontSize: 13, color: COLORS.muted }}>ไม่มีงานใกล้ครบกำหนด</div>}
+          {upcoming.length === 0 && <div className="text-muted text-sm">ไม่มีงานใกล้ครบกำหนด</div>}
           {upcoming.map((c) => (
-            <div key={c.id} onClick={() => onSelectBoard(c.board_id)} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderTop: `1px solid ${COLORS.paperDim}`, cursor: 'pointer', fontSize: 13 }}>
+            <div key={c.id} onClick={() => onSelectBoard(c.board_id)} className="flex justify-between items-center text-sm" style={{ padding: '8px 0', borderTop: '1px solid var(--paper-dim)', cursor: 'pointer' }}>
               <span>{c.title}</span>
-              <span style={{ color: COLORS.gold, fontWeight: 600 }}>{c.deadline} · {boardMap[c.board_id]}</span>
+              <span className="text-gold font-bold">{c.deadline} · {boardMap[c.board_id]}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 600, margin: '0 0 10px' }}>ความคืบหน้าแต่ละบอร์ด</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <h3 className="font-fraunces font-bold text-lg text-ink" style={{ margin: '0 0 16px' }}>ความคืบหน้าแต่ละบอร์ด</h3>
+      <div className="flex-col gap-3">
         {boards.map((b) => {
           const boardCards = allCards.filter((c) => c.board_id === b.id);
           const t = boardCards.length;
           const d = boardCards.filter((c) => isDoneCol(c.column_id)).length;
           const p = t === 0 ? 0 : Math.round((d / t) * 100);
           return (
-            <div key={b.id} onClick={() => onSelectBoard(b.id)} style={{ background: 'white', border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: '12px 14px', cursor: 'pointer' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontSize: 14, fontWeight: 600 }}>{b.name}</span>
-                <span style={{ fontSize: 13, color: COLORS.muted }}>{p}%</span>
+            <div key={b.id} onClick={() => onSelectBoard(b.id)} className="card" style={{ padding: '14px 16px', cursor: 'pointer' }}>
+              <div className="flex justify-between items-center" style={{ marginBottom: 8 }}>
+                <span className="font-bold text-sm">{b.name}</span>
+                <span className="text-muted text-xs font-bold">{p}%</span>
               </div>
-              <div style={{ height: 5, background: COLORS.paperDim, borderRadius: 4, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${p}%`, background: COLORS.green }} />
+              <div className="progress-bg">
+                <div className="progress-fill" style={{ width: `${p}%` }} />
               </div>
             </div>
           );
         })}
-        {boards.length === 0 && <div style={{ fontSize: 13, color: COLORS.muted }}>ยังไม่มีบอร์ด — สร้างบอร์ดแรกของคุณ</div>}
+        {boards.length === 0 && <div className="text-muted text-sm text-center" style={{ padding: '20px 0' }}>ยังไม่มีบอร์ด — สร้างบอร์ดแรกของคุณ</div>}
       </div>
     </div>
   );

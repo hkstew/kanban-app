@@ -4,8 +4,6 @@ import Column from './Column';
 import CardModal from './CardModal';
 import * as api from '../lib/api';
 
-const COLORS = { ink: '#1C1B1A', paperDim: '#F1EDE5', green: '#3D7A6B', line: '#D9D4C9', muted: '#8A857C' };
-
 export default function BoardView({ board, onBoardDataChanged }) {
   const [columns, setColumns] = useState([]);
   const [cards, setCards] = useState([]);
@@ -153,43 +151,39 @@ export default function BoardView({ board, onBoardDataChanged }) {
   const progress = totalCards === 0 ? 0 : Math.round((doneCards / totalCards) * 100);
 
   if (loading) {
-    return <div style={{ padding: 30, color: COLORS.muted, fontSize: 14 }}>กำลังโหลดบอร์ด...</div>;
+    return <div className="text-muted text-sm text-center" style={{ padding: 40 }}>กำลังโหลดบอร์ด...</div>;
   }
 
   return (
-    <div>
-      {error && (
-        <div style={{ background: '#FCE9E7', border: '1px solid #E8645A55', color: '#B23A30', padding: '8px 12px', borderRadius: 8, fontSize: 13, marginBottom: 12 }}>
-          {error}
-        </div>
-      )}
+    <div className="flex-col" style={{ minHeight: '100%' }}>
+      {error && <div className="alert-error">{error}</div>}
 
-      <div style={{ padding: '4px 4px 14px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontFamily: 'Fraunces, serif', fontSize: 38, fontWeight: 700, color: COLORS.green, lineHeight: 1 }}>{progress}%</span>
-          <span style={{ fontSize: 12, color: COLORS.muted }}>เสร็จแล้ว {doneCards} จาก {totalCards} งาน</span>
+      <div style={{ marginBottom: 24 }}>
+        <div className="flex items-baseline gap-3 wrap" style={{ marginBottom: 12 }}>
+          <span className="font-fraunces font-bold text-green" style={{ fontSize: 40, lineHeight: 1 }}>{progress}%</span>
+          <span className="text-muted text-sm font-medium">เสร็จแล้ว {doneCards} จาก {totalCards} งาน</span>
         </div>
-        <div style={{ height: 6, background: COLORS.paperDim, borderRadius: 4, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${progress}%`, background: COLORS.green, transition: 'width 0.3s' }} />
+        <div className="progress-bg">
+          <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: '1 1 160px', border: `1px solid ${COLORS.line}`, borderRadius: 8, padding: '6px 10px', background: 'white' }}>
-          <Search size={14} color={COLORS.muted} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหางาน..." style={{ border: 'none', outline: 'none', fontSize: 13, flex: 1, background: 'transparent' }} />
-          {search && <X size={13} style={{ cursor: 'pointer', color: COLORS.muted }} onClick={() => setSearch('')} />}
+      <div className="flex items-center gap-2 wrap" style={{ marginBottom: 24 }}>
+        <div className="flex items-center gap-2 flex-1 shrink-0" style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', padding: '8px 12px', background: 'white', minWidth: 200 }}>
+          <Search size={16} className="text-muted" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ค้นหางาน..." className="input-ghost flex-1" style={{ fontSize: 14 }} />
+          {search && <X size={14} className="text-muted" style={{ cursor: 'pointer' }} onClick={() => setSearch('')} />}
         </div>
         <div style={{ position: 'relative' }}>
-          <button onClick={() => setFilterOpen(!filterOpen)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 11px', borderRadius: 8, border: `1px solid ${filterTag ? COLORS.ink : COLORS.line}`, background: filterTag ? COLORS.ink : 'white', color: filterTag ? 'white' : COLORS.ink, cursor: 'pointer', fontSize: 13 }}>
-            <TagIcon size={13} /> {filterTag ? tags.find((t) => t.id === filterTag)?.name : 'แท็ก'} <ChevronDown size={12} />
+          <button onClick={() => setFilterOpen(!filterOpen)} className={`btn ${filterTag ? 'btn-primary' : 'btn-outline'}`}>
+            <TagIcon size={14} /> {filterTag ? tags.find((t) => t.id === filterTag)?.name : 'แท็ก'} <ChevronDown size={14} />
           </button>
           {filterOpen && (
-            <div style={{ position: 'absolute', top: 36, right: 0, background: 'white', border: `1px solid ${COLORS.line}`, borderRadius: 8, padding: 6, zIndex: 20, minWidth: 140, boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
-              <div onClick={() => { setFilterTag(null); setFilterOpen(false); }} style={{ padding: '6px 8px', fontSize: 13, cursor: 'pointer', borderRadius: 5 }}>ทั้งหมด</div>
+            <div className="card" style={{ position: 'absolute', top: 44, right: 0, padding: 8, zIndex: 20, minWidth: 160 }}>
+              <div onClick={() => { setFilterTag(null); setFilterOpen(false); }} className="btn-ghost" style={{ display: 'block', padding: '8px 12px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', textAlign: 'left', marginBottom: 4 }}>ทั้งหมด</div>
               {tags.map((t) => (
-                <div key={t.id} onClick={() => { setFilterTag(t.id); setFilterOpen(false); }} style={{ padding: '6px 8px', fontSize: 13, cursor: 'pointer', borderRadius: 5, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: t.color }} /> {t.name}
+                <div key={t.id} onClick={() => { setFilterTag(t.id); setFilterOpen(false); }} className="btn-ghost flex items-center gap-2" style={{ padding: '8px 12px', borderRadius: 'var(--radius-sm)', cursor: 'pointer', width: '100%', justifyContent: 'flex-start' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: t.color }} /> <span style={{ color: 'var(--ink)' }}>{t.name}</span>
                 </div>
               ))}
             </div>
@@ -197,7 +191,7 @@ export default function BoardView({ board, onBoardDataChanged }) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 12 }}>
+      <div className="board-scroll">
         {columns.map((col) => (
           <Column
             key={col.id}
@@ -217,12 +211,12 @@ export default function BoardView({ board, onBoardDataChanged }) {
           />
         ))}
 
-        <div style={{ minWidth: 200, paddingTop: 4 }}>
+        <div className="board-column" style={{ padding: '12px 0' }}>
           {addingCol ? (
-            <input autoFocus value={newColName} onChange={(e) => setNewColName(e.target.value)} onBlur={handleAddColumn} onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()} placeholder="ชื่อคอลัมน์ใหม่" style={{ padding: '8px 10px', borderRadius: 8, border: `1px solid ${COLORS.line}`, fontSize: 13, width: '100%', boxSizing: 'border-box' }} />
+            <input autoFocus value={newColName} onChange={(e) => setNewColName(e.target.value)} onBlur={handleAddColumn} onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()} placeholder="ชื่อคอลัมน์ใหม่" className="input" style={{ width: '100%' }} />
           ) : (
-            <button onClick={() => setAddingCol(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px', borderRadius: 8, border: `1px dashed ${COLORS.line}`, background: 'transparent', color: COLORS.muted, cursor: 'pointer', fontSize: 13, width: '100%' }}>
-              <Plus size={14} /> เพิ่มคอลัมน์
+            <button onClick={() => setAddingCol(true)} className="btn btn-dashed" style={{ width: '100%', padding: '12px' }}>
+              <Plus size={16} /> เพิ่มคอลัมน์
             </button>
           )}
         </div>

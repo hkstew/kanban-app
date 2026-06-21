@@ -2,14 +2,6 @@ import React, { useState } from 'react';
 import { Trello, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
-const COLORS = {
-  ink: '#1C1B1A',
-  paper: '#FAF8F4',
-  line: '#D9D4C9',
-  muted: '#8A857C',
-  accent: '#E8645A',
-};
-
 export default function AuthScreen() {
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [email, setEmail] = useState('');
@@ -44,65 +36,60 @@ export default function AuthScreen() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: COLORS.paper, padding: 20,
-    }}>
+    <div className="flex items-center justify-center" style={{ minHeight: '100vh', padding: 20 }}>
       <div style={{ width: '100%', maxWidth: 360 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 28 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: COLORS.ink, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Trello size={17} color={COLORS.paper} />
+        <div className="flex items-center justify-center gap-2" style={{ marginBottom: 28 }}>
+          <div className="bg-ink flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)' }}>
+            <Trello size={17} className="text-white" />
           </div>
-          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 21 }}>งานของฉัน</span>
+          <span className="font-fraunces font-bold text-xl">งานของฉัน</span>
         </div>
 
-        <div style={{ background: 'white', border: `1px solid ${COLORS.line}`, borderRadius: 14, padding: 24 }}>
-          <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 19, fontWeight: 600, margin: '0 0 18px', textAlign: 'center' }}>
+        <div className="card" style={{ padding: 24 }}>
+          <h1 className="font-fraunces font-bold text-lg text-center" style={{ margin: '0 0 18px' }}>
             {mode === 'login' ? 'เข้าสู่ระบบ' : 'สร้างบัญชีใหม่'}
           </h1>
 
           <form onSubmit={handleSubmit}>
-            <label style={{ fontSize: 12, color: COLORS.muted, display: 'block', marginBottom: 5 }}>อีเมล</label>
+            <label className="text-muted text-xs font-medium" style={{ display: 'block', marginBottom: 6 }}>อีเมล</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              style={{ width: '100%', padding: '9px 10px', borderRadius: 8, border: `1px solid ${COLORS.line}`, fontSize: 14, marginBottom: 14, boxSizing: 'border-box' }}
+              className="input"
+              style={{ marginBottom: 14 }}
             />
 
-            <label style={{ fontSize: 12, color: COLORS.muted, display: 'block', marginBottom: 5 }}>รหัสผ่าน</label>
+            <label className="text-muted text-xs font-medium" style={{ display: 'block', marginBottom: 6 }}>รหัสผ่าน</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="อย่างน้อย 6 ตัวอักษร"
-              style={{ width: '100%', padding: '9px 10px', borderRadius: 8, border: `1px solid ${COLORS.line}`, fontSize: 14, marginBottom: 18, boxSizing: 'border-box' }}
+              className="input"
+              style={{ marginBottom: 18 }}
             />
 
-            {error && <div style={{ color: COLORS.accent, fontSize: 13, marginBottom: 14 }}>{error}</div>}
-            {info && <div style={{ color: '#3D7A6B', fontSize: 13, marginBottom: 14 }}>{info}</div>}
+            {error && <div className="text-error text-sm font-medium" style={{ marginBottom: 14 }}>{error}</div>}
+            {info && <div className="text-green text-sm font-medium" style={{ marginBottom: 14 }}>{info}</div>}
 
             <button
               type="submit"
               disabled={loading}
-              style={{
-                width: '100%', padding: '10px', borderRadius: 8, border: 'none',
-                background: COLORS.ink, color: COLORS.paper, fontSize: 14, fontWeight: 600,
-                cursor: loading ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                opacity: loading ? 0.7 : 1,
-              }}
+              className="btn btn-primary"
+              style={{ width: '100%', opacity: loading ? 0.7 : 1 }}
             >
               {loading && <Loader2 size={15} className="spin" />}
               {mode === 'login' ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก'}
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: 16, fontSize: 13, color: COLORS.muted }}>
+          <div className="text-center text-sm text-muted" style={{ marginTop: 16 }}>
             {mode === 'login' ? (
-              <>ยังไม่มีบัญชี? <button onClick={() => { setMode('signup'); setError(''); setInfo(''); }} style={{ background: 'none', border: 'none', color: COLORS.ink, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>สมัครสมาชิก</button></>
+              <>ยังไม่มีบัญชี? <button onClick={() => { setMode('signup'); setError(''); setInfo(''); }} className="btn-ghost" style={{ border: 'none', background: 'none', color: 'var(--ink)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>สมัครสมาชิก</button></>
             ) : (
-              <>มีบัญชีอยู่แล้ว? <button onClick={() => { setMode('login'); setError(''); setInfo(''); }} style={{ background: 'none', border: 'none', color: COLORS.ink, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>เข้าสู่ระบบ</button></>
+              <>มีบัญชีอยู่แล้ว? <button onClick={() => { setMode('login'); setError(''); setInfo(''); }} className="btn-ghost" style={{ border: 'none', background: 'none', color: 'var(--ink)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>เข้าสู่ระบบ</button></>
             )}
           </div>
         </div>
