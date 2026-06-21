@@ -1,0 +1,29 @@
+:root {
+  --ink: #1C1B1A;
+  --paper: #FAF8F4;
+  --paper-dim: #F1EDE5;
+  --accent: #E8645A;
+  --green: #3D7A6B;
+  --gold: #D4A24C;
+  --line: #D9D4C9;
+  --muted: #8A857C;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+}
+
+input, textarea, select, button { font-family: inherit; }
+
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
